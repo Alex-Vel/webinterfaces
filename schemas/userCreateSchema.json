@@ -1,0 +1,12 @@
+{
+    "username": "Blyat",
+    "password": "Blyat_password",
+    "location": "BlyatTown",
+    "address":{
+        "street": "Blyatstreet",
+        "number": "2"
+    },
+    "birth_date": "05-04-1992",
+    "email":"blyat@blyat.com"
+
+}
