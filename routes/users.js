@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/index');
 const bcrypt = require('bcrypt');
-
+const passportService = require('./auth');
+const secretJWT = require('../jwt-key.json');
+const jwt = require('jsonwebtoken');
 
 // app.post("/users", (req, res) => {
 //   const ajv = new Ajv();
@@ -19,9 +21,30 @@ const bcrypt = require('bcrypt');
 //   }
 // });
 
+//login a user
+
+router.get('/login', passportService.authenticate('basic', { session: false }), async (req, res) => {
+
+  const payload = {
+    user : {
+      id: req.user.id
+    }
+  };
+
+  const options = {
+    expiresIn: '1m'
+  }
+
+  const token = jwt.sign(payload, secretJWT.secretKey, options);
+
+  return res.json({ jwt: token });
+});
+
 // register a user
 router.post("/", (req, res) => {
     const { username, email, password, location, address, birth_date } = req.body;
+    
+    console.log(req.body);
     const hashedPassword = bcrypt.hashSync(password, 8);
     const newUser = [
       username,
@@ -34,10 +57,10 @@ router.post("/", (req, res) => {
   
     console.log(req.body);
   
-    db.query("SELECT email FROM users WHERE email= $1 ", [email])
-      .then((email) => {
-        if (email.rows.length > 0)
-          return res.status(400).send("Email already exists");
+    db.query("SELECT username FROM users WHERE username= $1 ", [username])
+      .then((username) => {
+        if (username.rows.length > 0)
+          return res.status(400).send("username already exists");
   
         db.query(
           "INSERT INTO users (username, email, password, address, birth_date, location) VALUES ($1, $2, $3, $4, $5, $6) ",

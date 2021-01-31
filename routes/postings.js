@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const db = require("../db/index");
 const { v4: uuidv4 } = require("uuid");
+const passportService = require('./auth');
+const jwt = require('jsonwebtoken');
 
 // get postings for user
 router.get("/:id", (req, res) => {

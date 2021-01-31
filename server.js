@@ -14,7 +14,6 @@ const postings = require("./routes/postings");
 
 const imageUpload = require("./components/imageUpload");
 
-const jsonSchemaDocument = require("./schemas/WeatherSchemaDocument.json");
 
 app.use(express.static("public"));
 app.use(express.json());

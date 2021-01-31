@@ -1,68 +1,58 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../db/index');
-const bcrypt = require('bcrypt');
 const passport = require('passport');
+const BasicStrategy = require('passport-http').BasicStrategy;
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy,
       ExtractJwt = require('passport-jwt').ExtractJwt;
-const jwtSecretKey = require('./jwt-key.json');
+const bcrypt = require("bcrypt");
+const db = require("../db/index");
+
+const secretJWT = require("../jwt-key.json");
 
 
-//JWT auths
 
+passport.use(new BasicStrategy(
+  async function(username, password, done) {
 
-let options = {}
-
-options.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-
-options.secretOrKey = jwtSecretKey.secretKey;
-
-passport.use(new JwtStrategy(options, function(jwt_payload, done) {
-  console.log("Processing JWT payload for token content:");
-  console.log(jwt_payload);
-
-   done(null, jwt_payload.user);
-
-}));
-
-
-app.get(
-  '/jwtProtectedResource',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    console.log("jwt");
-    res.json(
-      {
-        status: "Successfully accessed protected resource with JWT",
-        user: req.user
+    try {
+      const user = await db.query('SELECT * FROM users WHERE username=$1', [username]);
+      console.log(user);
+      if(user == undefined) {
+        // Username not found
+        console.log("no such username")
+        return done(null, false);
       }
-    );
+      console.log("user exists")
+      /* Verify password match */
+      if(bcrypt.compareSync(password, user.rows[0].password) == false) {
+        console.log("password doesnt match")
+        // Password does not match
+        return done(null, false);
+      }
+      console.log("password ok")
+      return done(null, user);
+    } catch (error) {
+      console.log("error")
+      return done(null, false);
+      
+    }
   }
+));
+
+let jwtOptions = {};
+
+/* Configure the passport-jwt module to expect JWT
+   in headers from Authorization field as Bearer token */
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+
+/* This is the secret signing key.
+   You should NEVER store it in code  */
+jwtOptions.secretOrKey = secretJWT.secretKey;
+
+passport.use(
+  new JwtStrategy(jwtOptions, function (jwt_payload, done) {
+    done(null, jwt_payload.user);
+  })
 );
 
 
-app.get(
-  '/loginForJWT',
-  passport.authenticate('basic', { session: false }),
-  (req, res) => {
-    const body = {
-      id: req.user.id,
-      email : req.user.email
-    };
-
-    const payload = {
-      user : body
-    };
-
-    const options = {
-      expiresIn: '1d'
-    }
-
-
-    const token = jwt.sign(payload, jwtSecretKey.secretKey, options);
-
-    return res.json({ token });
-})
-
-module.exports = router;
+module.exports = passport;
