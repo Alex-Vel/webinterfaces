@@ -1,27 +1,54 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/index');
 const bcrypt = require('bcrypt');
-const passportService = require('./auth');
-const secretJWT = require('../jwt-key.json');
 const jwt = require('jsonwebtoken');
+const users = require('../services/users');
+const passportService = require('./auth');
 
-// app.post("/users", (req, res) => {
-//   const ajv = new Ajv();
-//   const validate = ajv.compile(userSchemaDocument);
-//   const valid = validate(req.body);
-//   if (valid == true) {
-//     //new user create
-//     //console.log(req.body)
-//     res.status(200);
-//     res.send("User created");
-//   } else {
-//     res.status(400);
-//     res.send("Problem with user creation");
-//   }
-// });
+const Validator = require('jsonschema').Validator;
+const userSchema = require('../schemas/userSchema.json');
+const secretJWT = require('../jwt-key.json');
 
-//login a user
+
+
+function checkSchema(req, res, next)
+{
+  try {
+    const v = new Validator();
+    const validateResult = v.validate(req.body, userSchema);
+    if(validateResult.errors.length > 0) {
+      validateResult.errors.status = 400;
+      next(validateResult.errors);
+    }
+  }
+  catch(error) {
+    error.status = 400;
+    next(error);
+  }
+  next();
+}
+
+router.post('', checkSchema, async (req, res) => {
+  const hashedPassword = bcrypt.hashSync(req.body.password, 6);
+
+  try {
+    const newUser = await users.createNew({
+      username: req.body.username,
+      email: req.body.email,
+      password: hashedPassword,
+      location: req.body.location,
+      birth_date: req.body.birth_date
+    });
+
+    res.status(201).json({
+      userId: newUser.user_id
+    });
+  } catch (error) {
+    res.status(400).json({
+      reason: error
+    });
+  }
+});
 
 router.get('/login', passportService.authenticate('basic', { session: false }), async (req, res) => {
 
@@ -35,69 +62,74 @@ router.get('/login', passportService.authenticate('basic', { session: false }), 
     expiresIn: '1m'
   }
 
+  /* Sign the token with payload, key and options.
+     Detailed documentation of the signing here:
+     https://github.com/auth0/node-jsonwebtoken#readme */
   const token = jwt.sign(payload, secretJWT.secretKey, options);
 
   return res.json({ jwt: token });
 });
 
-// register a user
-router.post("/", (req, res) => {
-    const { username, email, password, location, address, birth_date } = req.body;
-    
-    console.log(req.body);
-    const hashedPassword = bcrypt.hashSync(password, 8);
-    const newUser = [
-      username,
-      email,
-      hashedPassword,
-      address,
-      birth_date,
-      location,
-    ];
-  
-    console.log(req.body);
-  
-    db.query("SELECT username FROM users WHERE username= $1 ", [username])
-      .then((username) => {
-        if (username.rows.length > 0)
-          return res.status(400).send("username already exists");
-  
-        db.query(
-          "INSERT INTO users (username, email, password, address, birth_date, location) VALUES ($1, $2, $3, $4, $5, $6) ",
-          newUser
-        )
-          .then(() => res.sendStatus(201))
-          .catch((err) => {
-            res.sendStatus(500);
-          });
-      })
-      .catch((err) => {
-        res.sendStatus(500);
+router.put(
+  '/:id',
+  passportService.authenticate('jwt', { session: false }),
+  checkSchema,
+  async (req, res) => {
+    try {
+      const result = await users.modify({
+        id: req.params.id,
+        username: req.body.username,
+        email: bcrypt.hashSync(req.body.password, 6)
       });
-  });
-  
-// get user by ID
-router.get('/:id', (req, res) => {
-    const { id } = req.params;
-  
-    db.query('SELECT user_id, username, email FROM users WHERE user_id = $1 ', [id])
-      .then(user => {
-        if (user.rows.length > 0) {
-          console.log(user.rows);
-          const { user_id, username, email } = user.rows[0];
-          const userInfo = {
-            user_id,
-            username,
-            email
-          }
-  
-          res.send(userInfo)
-        }
-      })
-      .catch(err => {
-        res.sendStatus(500);
+
+      if(result.changes == 0) {
+        res.status(400).json({ reason: "UserId not found" });
+      }
+      else {
+        res.status(200).send();
+      }
+    } catch (error) {
+        res.status(400).json({
+        reason: error
       });
-  })
-//
-  
-  module.exports = router;
+    }
+});
+
+router.get('/:id',
+  passportService.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const user = await users.getUserById(req.params.id);
+
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(400).json({
+        reason: error
+      });
+    }
+
+  return res.json();
+});
+
+router.delete(
+  '/:id',
+  passportService.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const result = await users.deleteById(req.params.id);
+
+      if(result == false) {
+        res.status(404).json({ reason: "UserId not found" });
+      }
+      else {
+        res.status(200).send();
+      }
+
+    } catch (error) {
+      res.status(400).json({
+        reason: error
+      });
+    }
+})
+
+module.exports = router;

@@ -1,96 +1,114 @@
-const express = require("express");
-const router = express.Router({ mergeParams: true });
-const db = require("../db/index");
-const { v4: uuidv4 } = require("uuid");
+const express = require('express');
+const router = express.Router();
+const todos = require('../services/postings');
+const Validator = require('jsonschema').Validator;
 const passportService = require('./auth');
-const jwt = require('jsonwebtoken');
+const newPostingSchema = require('../schemas/newPostingSchema.json');
 
-// get postings for user
-router.get("/:id", (req, res) => {
-  const user_id = req.params.id;
+function schemaCheck(req, res, next)
+{
+  try {
+    const v = new Validator();
+    const validateResult = v.validate(req.body, newPostingSchema);
+    if(validateResult.errors.length > 0) {
+      validateResult.errors.status = 400;
+      next(validateResult.errors);
+    }
+  }
+  catch(error) {
+    error.status = 400;
+    next(error);
+  }
+  next();
+}
 
-  db.query("SELECT * FROM postings WHERE user_id=($1)", [user_id])
-    .then((postings) => {
-      res.send(postings.rows);
-    })
-    .catch((err) => {
-      console.log("get postings error ", err);
-      res.sendStatus(500);
-    });
+//get user specific postings
+router.get( '/', passportService.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      let userPostings = await todos.getTodosByUserId(req.user.user_id);
+
+      res.status(200).json({
+        postings: userPostings
+      });
+    } catch (error) {
+      res.status(400).json({
+        reason: error
+      });
+    }
 });
 
-// get posting by schedule uuid
-
-router.get("/", (req, res) => {
-  const uuid = req.params.uuid;
-
-  db.query("SELECT * FROM postings WHERE uuid=($1)", [uuid])
-    .then((postings) => {
-      res.send(postings.rows);
-    })
-    .catch((err) => {
-      console.log("get posting error ", err);
-      res.sendStatus(500);
-    });
+// get posting by id
+router.get('/:id', async (req, res) => {
+    try {
+      const posting = await postings.getPostingById(req.params.posting_id);
+      if(posting === undefined) {
+        res.status(404).send();
+      }
+      else {
+        res.status(200).json(posting);
+      }
+    } catch (error) {
+      res.status(400).json({
+        reason: error
+      });
+    }
 });
 
-// create a schedule for a user
-router.post("/", (req, res) => {
-  console.log(req.body);
-  const { title, description, user_id, posting_config, location, category } = req.body;
-  const uuid = uuidv4();
-  const newPosting = [title, description, uuid, user_id, posting_config, location, category];
+//create new posting
+router.post(
+  '',
+  //passportService.authenticate('jwt', { session: false }),
+  schemaCheck,
+  async (req, res) => {
 
-  db.query(
-    "INSERT INTO schedules (title, description, uuid, user_id, posting_config, location, category) VALUES ($1, $2, $3, $4, $5, $6, $7) ",
-    newPosting
-  )
-    .then(() =>
-      db
-        .query("SELECT * FROM postings WHERE uuid=($1)", [uuid])
-        .then((result) => res.send(result.rows))
-    )
-
-    .catch((err) => {
-      console.log("Create new posting error ", err);
-      res.sendStatus(500);
-    });
+    try {
+      const result = await todos.createNewPosting({
+        user_id: req.body.user_id,
+        title: req.body.title,
+        description: req.body.description,
+        price: req.body.price,
+        shipping_method: req.body.shipping_method,
+        location: req.body.location,
+        category: req.body.category,
+        posting_config: req.body.posting_config
+      });
+      res.status(201).send();
+    } catch (error) {
+      res.status(400).json({
+        reason: error
+      });
+    }
 });
 
-//delete a schedule
+router.delete(
+  '/:id',
+  passportService.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      // Enforce that user can only query todos owned by him
+      const result = await todos.deleteTodoById(req.params.id, req.user.id);
 
-router.delete("/:id", (req, res) => {
-  console.log(req.params);
-  const schedule_id = req.params.id;
-
-  db.query("DELETE FROM schedules WHERE schedule_id=($1)", [schedule_id])
-
-    .then(() => res.sendStatus(200))
-    .catch((err) => {
-      console.log("Delete schedule error ", err);
-      res.sendStatus(500);
-    });
+      res.status(200).send();
+    } catch (error) {
+      res.status(404).send();
+    }
 });
 
-// edit a schedule title and description
+router.put(
+  '/:id',
+  passportService.authenticate('jwt', { session: false }),
+  schemaCheck,
+  async (req, res) => {
+    try {
+      // Enforce that user can only query todos owned by him
+      const result = await todos.updatePostingById(req.params.id, req.body);
 
-router.put("/:id", (req, res) => {
-  console.log(req.body);
-  const schedule_id = req.params.id;
-  const { title, description } = req.body;
-  const editSchedule = [title, description, schedule_id];
-  console.log(editSchedule);
-  db.query(
-    "UPDATE schedules SET title=($1), description=($2) WHERE schedule_id=($3)",
-    editSchedule
-  )
-    .then(() => {
-      res.sendStatus(200);
-    })
-    .catch((err) => {
-      console.log("edit schedule error ", err);
-      res.sendStatus(500);
-    });
+      res.status(200).send();
+    } catch (error) {
+      res.status(404).send();
+    }
+
 });
 
 module.exports = router;
