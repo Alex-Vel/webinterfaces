@@ -1,19 +1,21 @@
 const db = require("../db/index");
 const { v4: uuidv4 } = require("uuid");
 
-
-
 module.exports = {
-    //get all postings by user id service
+  //get all postings by user id service
   getPostingsByUserId: async (user_id) => {
     return new Promise((resolve, reject) => {
       db.query(
         "SELECT title, description, location, shipping_method, price, category FROM postings WHERE user_id = $1 ",
         [user_id],
         function (error, result) {
-          error !== null ? reject(error) : null;
-
-          resolve(result.rows);
+          console.log(result.rows);
+          if (result.rows.length < 1 || error != undefined) {
+            reject("no postings");
+          } else {
+            console.log(result.rows);
+            resolve(result.rows);
+          }
         }
       );
     });
@@ -46,26 +48,24 @@ module.exports = {
         })
         .catch((error) => reject(error));
     });
-
   },
-  getTodoById: async (todoId, userId) => {
+
+  //get posting by id
+  getPostingById: async (posting_id) => {
     return new Promise((resolve, reject) => {
-      dbService
-        .getDb()
-        .get(
-          "SELECT * FROM todos WHERE id = ? AND user = ?",
-          [todoId, userId],
-          function (error, rows) {
-            error !== null ? reject(error) : null;
-
-            if (rows != undefined) {
-              // This datatype conversion is here because sqlite does not have boolean datatype, only integer
-              convertIsDoneFromIntegerToBoolean([rows]);
-            }
-
-            resolve(rows);
+      db.query(
+        "SELECT title, description, location, shipping_method, price, category FROM postings WHERE posting_id = $1 ",
+        [posting_id],
+        function (error, result) {
+          console.log(result.rows);
+          if (result.rows.length < 1 || error != undefined) {
+            reject("no postings");
+          } else {
+            console.log(result.rows);
+            resolve(result.rows);
           }
-        );
+        }
+      );
     });
   },
   deleteTodoById: async (todoId, userId) => {

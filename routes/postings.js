@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const todos = require('../services/postings');
+const postings = require('../services/postings');
 const Validator = require('jsonschema').Validator;
 const passportService = require('./auth');
 const newPostingSchema = require('../schemas/newPostingSchema.json');
@@ -23,18 +23,21 @@ function schemaCheck(req, res, next)
 }
 
 //get user specific postings
-router.get( '/', passportService.authenticate('jwt', { session: false }),
+router.get( '/user/:user_id', 
+//passportService.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
-      let userPostings = await todos.getTodosByUserId(req.user.user_id);
-
+      console.log(req.params.user_id);
+      let userPostings = await postings.getPostingsByUserId(req.params.user_id);
+     
       res.status(200).json({
         postings: userPostings
       });
     } catch (error) {
       res.status(400).json({
         reason: error
-      });
+      }
+      );
     }
 });
 
@@ -63,7 +66,7 @@ router.post(
   async (req, res) => {
 
     try {
-      const result = await todos.createNewPosting({
+      const result = await postings.createNewPosting({
         user_id: req.body.user_id,
         title: req.body.title,
         description: req.body.description,
@@ -87,7 +90,7 @@ router.delete(
   async (req, res) => {
     try {
       // Enforce that user can only query todos owned by him
-      const result = await todos.deleteTodoById(req.params.id, req.user.id);
+      const result = await postings.deletePostingById(req.params.id, req.user.id);
 
       res.status(200).send();
     } catch (error) {
