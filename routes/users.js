@@ -14,8 +14,8 @@ const secretJWT = require('../jwt-key.json');
 function checkSchema(req, res, next)
 {
   try {
-    const v = new Validator();
-    const validateResult = v.validate(req.body, userSchema);
+    const validate = new Validator();
+    const validateResult = validate.validate(req.body, userSchema);
     if(validateResult.errors.length > 0) {
       validateResult.errors.status = 400;
       next(validateResult.errors);
@@ -51,10 +51,10 @@ router.post('', checkSchema, async (req, res) => {
 });
 
 router.get('/login', passportService.authenticate('basic', { session: false }), async (req, res) => {
-
+  console.log(req.user);
   const payload = {
     user : {
-      id: req.user.id
+      id: req.user.user_id
     }
   };
 
@@ -75,6 +75,7 @@ router.put(
   passportService.authenticate('jwt', { session: false }),
   checkSchema,
   async (req, res) => {
+ 
     try {
       const result = await users.modify({
         id: req.params.id,
@@ -98,9 +99,9 @@ router.put(
 router.get('/:id',
   passportService.authenticate('jwt', { session: false }),
   async (req, res) => {
+   // console.log("logged in users id: " + req.user.id);
     try {
       const user = await users.getUserById(req.params.id);
-
       res.status(200).json(user);
     } catch (error) {
       res.status(400).json({
@@ -112,14 +113,14 @@ router.get('/:id',
 });
 
 router.delete(
-  '/:id',
+  '/',
   passportService.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
-      const result = await users.deleteById(req.params.id);
+      const result = await users.deleteById(req.user.id);
 
       if(result == false) {
-        res.status(404).json({ reason: "UserId not found" });
+        res.status(404).json({ reason: "User not found" });
       }
       else {
         res.status(200).send();

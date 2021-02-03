@@ -8,8 +8,8 @@ const newPostingSchema = require('../schemas/newPostingSchema.json');
 function schemaCheck(req, res, next)
 {
   try {
-    const v = new Validator();
-    const validateResult = v.validate(req.body, newPostingSchema);
+    const validate = new Validator();
+    const validateResult = validate.validate(req.body, newPostingSchema);
     if(validateResult.errors.length > 0) {
       validateResult.errors.status = 400;
       next(validateResult.errors);
@@ -89,7 +89,7 @@ router.delete(
   passportService.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
-      // Enforce that user can only query todos owned by him
+      //extract jwt user id
       const result = await postings.deletePostingById(req.params.id, req.user.id);
 
       res.status(200).send();
@@ -99,13 +99,13 @@ router.delete(
 });
 
 router.put(
-  '/:id',
+  '/:user_id',
   passportService.authenticate('jwt', { session: false }),
   schemaCheck,
   async (req, res) => {
     try {
-      // Enforce that user can only query todos owned by him
-      const result = await todos.updatePostingById(req.params.id, req.body);
+      //exctract jwt user id
+      const result = await postings.updatePostingById(req.params.user_id, req.body);
 
       res.status(200).send();
     } catch (error) {

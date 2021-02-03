@@ -15,7 +15,7 @@ passport.use(new BasicStrategy(
 
     try {
       const user = await db.query('SELECT * FROM users WHERE username=$1', [username]);
-      console.log(user);
+     
       if(user == undefined) {
         // Username not found
         console.log("no such username")
@@ -29,7 +29,8 @@ passport.use(new BasicStrategy(
         return done(null, false);
       }
       console.log("password ok")
-      return done(null, user);
+      return done(null, user.rows[0]);
+      
     } catch (error) {
       console.log("error")
       return done(null, false);
@@ -50,9 +51,12 @@ jwtOptions.secretOrKey = secretJWT.secretKey;
 
 passport.use(
   new JwtStrategy(jwtOptions, function (jwt_payload, done) {
-    done(null, jwt_payload.user);
-  })
-);
+      console.log("payload is..: " + jwt_payload.user.id);
+      done(null, jwt_payload.user);
+    
+  }));
+
+
 
 
 module.exports = passport;

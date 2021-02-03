@@ -68,37 +68,37 @@ module.exports = {
       );
     });
   },
-  deleteTodoById: async (todoId, userId) => {
-    return new Promise((resolve, reject) => {
-      dbService
-        .run("DELETE FROM todos WHERE id = ? AND user = ?", [todoId, userId])
-        .then((result) => {
-          if (result.changes == 1) {
-            resolve(true);
-          } else {
-            reject(false);
-          }
-        })
-        .catch((error) => reject(error));
+  deletePostingById: async (user_id, posting_id) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await db.query(
+          "DELETE FROM postings WHERE user_id = $1 AND posting_id = $2 ",
+          [user_id, posting_id]
+        );
+        console.log(result);
+        if (result.rowCount > 0) {
+          resolve(true);
+        } else {
+          reject("no such posting");
+        }
+      } catch {
+        reject(error);
+      }
     });
   },
-  updateTodoById: async (todoId, todoContent) => {
+  updatePostingById: async (posting_id, updatedPosting) => {
     return new Promise((resolve, reject) => {
-      dbService
-        .run(
-          "UPDATE todos SET description = ?, isDone = ?, dueDateTime = ? WHERE id = ?",
-          [
-            todoContent.description,
-            todoContent.isDone,
-            todoContent.dueDateTime,
-            todoId,
+      return db
+        .query(
+          " UPDATE postings SET title = $1, description = $2, price = $3, location = $4, category = $5 WHERE posting_id = $6 "[
+            (updatedPosting.title, updatedPosting.description, updatedPosting.price, updatedPosting.location, updatedPosting.category, posting_id)
           ]
         )
         .then((result) => {
-          if (result.changes == 1) {
+          if (result.rowCount > 0) {
             resolve(true);
           } else {
-            reject(false);
+            reject("editting posting error");
           }
         })
         .catch((error) => reject(error));
