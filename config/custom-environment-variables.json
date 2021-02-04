@@ -2,6 +2,5 @@
     "database": {
       "user": "DATABASE_ADMIN",
       "password": "DATABASE_ADMIN_PASSWORD"
-    },
-    "__comment__": "create env variable and store your database username and password. Example: 'DATABASE_ADMIN=ADMIN' 'DATABASE_ADMIN_PASSWORD=PASSWORD' replace 'ADMIN' and 'PASSWORD' with your own username and password"
+    }
   }

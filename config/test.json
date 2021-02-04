@@ -1,0 +1,7 @@
+{
+    "database": {
+      "name": "web_interfaces_test",
+      "host": "localhost",
+      "port": "5432"
+    }
+}
