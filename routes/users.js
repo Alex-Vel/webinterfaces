@@ -70,21 +70,22 @@ router.get('/login', passportService.authenticate('basic', { session: false }), 
   return res.json({ jwt: token });
 });
 
+//edit currently logged in user. 
 router.put(
-  '/:id',
+  '/',
   passportService.authenticate('jwt', { session: false }),
   checkSchema,
   async (req, res) => {
  
     try {
       const result = await users.modify({
-        id: req.params.id,
+        id: req.user.id,
         username: req.body.username,
         email: bcrypt.hashSync(req.body.password, 6)
       });
 
       if(result.changes == 0) {
-        res.status(400).json({ reason: "UserId not found" });
+        res.status(400).json({ reason: "User not found" });
       }
       else {
         res.status(200).send();
@@ -96,6 +97,7 @@ router.put(
     }
 });
 
+//get some users information by id
 router.get('/:id',
   passportService.authenticate('jwt', { session: false }),
   async (req, res) => {
@@ -112,6 +114,7 @@ router.get('/:id',
   return res.json();
 });
 
+//delete currently logged in user 
 router.delete(
   '/',
   passportService.authenticate('jwt', { session: false }),

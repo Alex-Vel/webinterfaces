@@ -9,7 +9,6 @@
         {
             "title": "posting Title",
             "description": "posting description",
-            "user_id": 5,
             "location": "posting location",
             "price": 21.5,
             "shipping_method": "delivery method",
@@ -20,7 +19,6 @@
     "required": [
         "title",
         "description",
-        "user_id",
         "location",
         "price",
         "shipping_method",
@@ -46,16 +44,6 @@
             "default": "",
             "examples": [
                 "posting description"
-            ]
-        },
-        "user_id": {
-            "$id": "#/properties/user_id",
-            "type": "integer",
-            "title": "The user_id schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": 0,
-            "examples": [
-                5
             ]
         },
         "location": {
