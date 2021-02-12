@@ -1,6 +1,10 @@
+process.env.NODE_ENV = "test";
 const config = require('config');
 let postgres = require('pg');
+const { post } = require('../routes/users');
 let pool = null;
+
+
 try {
   pool = new postgres.Pool({
     connectionLimit: 10,
@@ -11,11 +15,15 @@ try {
     database: config.get('database.name'),
     multipleStatements: true
   });
+console.log("db opened up! " + pool.options.database);
+
 
 } catch (error) {
   console.error('postgres pool create failed');
+  console.log("db error! " + pool.options.database);
   console.error(error);
 }
+
 
 
 const api = {
@@ -34,6 +42,9 @@ const api = {
   },
   closeAll: () => {
     pool.end();
+  },
+  getDb: () =>{
+    return(pool.options.database);
   }
 };
 

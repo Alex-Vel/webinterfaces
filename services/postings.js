@@ -6,13 +6,13 @@ const { v4: uuidv4 } = require("uuid");
    async function getPostingByUuid (uuid){
       return new Promise((resolve, reject) => {
         db.query(
-          "SELECT posting_id, title, description, location, shipping_method, price, categor, image_links FROM postings WHERE uuid = $1 ",
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE uuid = $1 ",
           [uuid],
           function (error, result) {
-            if (result.rows.length < 1 || error != undefined) {
+            if (result.rows[0].length < 1 || error != undefined) {
               reject("no postings");
             } else {
-              resolve(result.rows);
+              resolve(result.rows[0]);
             }
           }
         );
@@ -24,14 +24,14 @@ module.exports = {
   getPostingsByUserId: async (user_id) => {
     return new Promise((resolve, reject) => {
       db.query(
-        "SELECT title, description, location, shipping_method, price, category, image_links FROM postings WHERE user_id = $1 ",
+        "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE user_id = $1 ",
         [user_id],
         function (error, result) {
-          console.log(result.rows);
+        //  console.log(result.rows);
           if (result.rows.length < 1 || error != undefined) {
             reject("no postings");
           } else {
-            console.log(result.rows);
+         //   console.log(result.rows);
             resolve(result.rows);
           }
         }
@@ -83,16 +83,18 @@ module.exports = {
   //get posting by id
   getPostingById: async (posting_id) => {
     return new Promise((resolve, reject) => {
+      console.log('getting posting with id.. ' + posting_id)
       db.query(
-        "SELECT title, description, location, shipping_method, price, category FROM postings WHERE posting_id = $1 ",
+        "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE posting_id = $1 ",
         [posting_id],
         function (error, result) {
-          console.log(result.rows);
-          if (result.rows.length < 1 || error != undefined) {
-            reject("no postings");
+          console.log('result is..');
+          console.log(result.rows[0]);
+          if (result.rows[0] == undefined|| error != undefined) {
+            reject("no such posting");
           } else {
             console.log(result.rows);
-            resolve(result.rows);
+            resolve(result.rows[0]);
           }
         }
       );
@@ -100,16 +102,16 @@ module.exports = {
   },
 
   //delete a posting by its id, current user id required
-  deletePostingById: async (user_id, posting_id) => {
+  deletePostingById: async (posting_id, user_id) => {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await db.query(
           "DELETE FROM postings WHERE user_id = $1 AND posting_id = $2 ",
           [user_id, posting_id]
         );
-        console.log(result);
+        console.log('deleting posting..' + posting_id);
         if (result.rowCount > 0) {
-          resolve("dude deleted",true);
+          resolve("posting deleted",true);
         } else {
           reject("no such posting");
         }
@@ -119,21 +121,25 @@ module.exports = {
     });
   },
   updatePostingById: async (posting_id, updatedPosting) => {
-    return new Promise((resolve, reject) => {
-      return db
-        .query(
-          " UPDATE postings SET title = $1, description = $2, price = $3, location = $4, category = $5 WHERE posting_id = $6 "[
-            (updatedPosting.title, updatedPosting.description, updatedPosting.price, updatedPosting.location, updatedPosting.category, posting_id)
-          ]
-        )
-        .then((result) => {
-          if (result.rowCount > 0) {
-            resolve("posting edited", true);
-          } else {
-            reject("editting posting error");
-          }
-        })
-        .catch((error) => reject(error));
+    console.log('editting posting..' + posting_id)
+    console.log(updatedPosting);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await db
+          .query(
+            "UPDATE postings SET title = $1, description = $2, price = $3, location = $4, category = $5 WHERE posting_id = $6 " ,
+            [updatedPosting.title, updatedPosting.description, updatedPosting.price, updatedPosting.location, updatedPosting.category, posting_id]
+          );
+        if (result.rowCount > 0) {
+        
+          resolve("posting edited", true);
+        } else {
+          reject("editting posting error");
+        }
+      } catch (error) {
+        console.log(error);
+        return reject(error);
+      }
     });
   },
 };

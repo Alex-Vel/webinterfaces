@@ -27,10 +27,10 @@ let serverInstance = null;
 
 //assign an instance to the serverinstance var
 module.exports = {
-  start: function () {
+  start: function (env) {
     serverInstance = app.listen(port, () =>
       //console log server start if all is good
-      console.log(`Server is up and listening on ${port}...`)
+      console.log(`Server is up and listening on ${port}...` + env)
     );
   },
   close: function () {

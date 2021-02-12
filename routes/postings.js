@@ -62,7 +62,8 @@ router.get(
 );
 
 // get posting by id
-router.get("/:id", async (req, res) => {
+router.get("/:posting_id", async (req, res) => {
+  console.log('getting posting with params.. ' + req.params.posting_id)
   try {
     const posting = await postings.getPostingById(req.params.posting_id);
     if (posting === undefined) {
@@ -71,7 +72,7 @@ router.get("/:id", async (req, res) => {
       res.status(200).json(posting);
     }
   } catch (error) {
-    res.status(400).json({
+    res.status(404).json({
       reason: error,
     });
   }
@@ -144,16 +145,14 @@ router.post(
 );
 
 router.delete(
-  "/:id",
+  "/:posting_id",
   passportService.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      //extract jwt user id
       const result = await postings.deletePostingById(
-        req.params.id,
+        req.params.posting_id,
         req.user.id
       );
-
       res.status(200).send();
     } catch (error) {
       res.status(404).send();
@@ -162,14 +161,14 @@ router.delete(
 );
 
 router.put(
-  "/:user_id",
+  "/:posting_id",
   passportService.authenticate("jwt", { session: false }),
   schemaCheck,
   async (req, res) => {
     try {
       //exctract jwt user id
       const result = await postings.updatePostingById(
-        req.params.user_id,
+        req.params.posting_id,
         req.body
       );
 

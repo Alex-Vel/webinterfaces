@@ -1,19 +1,21 @@
 const db = require("../db/index");
 const { v4: uuidv4 } = require("uuid");
 
+
 async function getUserById(user_id) {
   return new Promise((resolve, reject) => {
+    console.log(user_id);
     db.query(
         "SELECT user_id, username, email, location, birth_date FROM users WHERE user_id = $1 ",
         [user_id],
         function (error, result) {
         if (result.rows.length < 1 || error !== undefined) {
           console.log("error happun : " + user_id + error);
-          console.log(result.rows + result.rows.length);
+          console.log(result.rows[0]);
           reject("no such user");
         } else {
-            console.log(result.rows[0] + result.rows.length);
-          resolve(result.rows);
+            console.log(result.rows[0]);
+          resolve(result.rows[0]);
           
         }
       }
@@ -44,10 +46,15 @@ async function getUserByName(username) {
 module.exports = {
   getAll: async () => {
     return new Promise((resolve, reject) => {
-      db.query("SELECT * FROM users", function (error, rows) {
-        error !== null ? reject(error) : null;
-
-        resolve(rows);
+      console.log("getting all users..");
+      db.query("SELECT username FROM users", function (error, result) {
+        if (error != null) {
+          reject(error);
+        }
+        else{
+          console.log(result.rows.length);
+        resolve(result.rows);
+        }
       });
     });
   },
@@ -79,7 +86,7 @@ module.exports = {
                 return getUserByName(user.username);
               })
               .then((user) => resolve(user))
-              .catch((error) => reject(error));
+              .catch((error) =>{ reject(error); console.log(error)});
           }
         }
       );
@@ -93,22 +100,38 @@ module.exports = {
         const result = await db.query("DELETE FROM users WHERE user_id = $1 ", [
           userId,
         ]);
-        console.log(result);
+        console.log("deleting user.. " + userId);
         if (result.rowCount > 0) {
           resolve(true);
         } else {
           reject("no such user");
         }
       } catch {
+        console.log(error);
         reject(error);
       }
     });
   },
   modify: async (user) => {
-    return db.query(
-      " UPDATE users SET username = $1, email = $2 WHERE user_id = $3 "[
-        (user.username, user.email, user.user_id)
-      ]
-    );
-  },
+    return new Promise(async (resolve, reject) => {
+      console.log(user);
+      try {
+        const result = await db.query(
+          "UPDATE users SET username = $1, email = $2 WHERE user_id = $3 ",[
+            user.username, user.email, user.id
+          ]);
+        if (result.rowCount > 0) {
+          resolve(true);
+        } else {
+          reject("editting user error");
+        }
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
+  }   
 };
+
+
+

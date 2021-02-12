@@ -7,21 +7,31 @@
     "default": {},
     "examples": [
         {
-            "username": "Blyat",
-            "password": "password123",
-            "email": "Blyatsky@blyat.com",
-            "location": "blyattown",
-            "birth_date": "1992-04-04"
+            "user_id": 48,
+            "username": "Tester1",
+            "email": "test1@test.com",
+            "location": "TestTown",
+            "birth_date": "05-04-1992"
         }
     ],
     "required": [
+        "user_id",
         "username",
-        "password",
         "email",
         "location",
         "birth_date"
     ],
     "properties": {
+        "user_id": {
+            "$id": "#/properties/user_id",
+            "type": "integer",
+            "title": "The user_id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                48
+            ]
+        },
         "username": {
             "$id": "#/properties/username",
             "type": "string",
@@ -29,17 +39,7 @@
             "description": "An explanation about the purpose of this instance.",
             "default": "",
             "examples": [
-                "Blyat"
-            ]
-        },
-        "password": {
-            "$id": "#/properties/password",
-            "type": "string",
-            "title": "The password schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "password123"
+                "Tester1"
             ]
         },
         "email": {
@@ -49,7 +49,7 @@
             "description": "An explanation about the purpose of this instance.",
             "default": "",
             "examples": [
-                "Blyatsky@blyat.com"
+                "test1@test.com"
             ]
         },
         "location": {
@@ -59,7 +59,7 @@
             "description": "An explanation about the purpose of this instance.",
             "default": "",
             "examples": [
-                "blyattown"
+                "TestTown"
             ]
         },
         "birth_date": {
@@ -69,9 +69,9 @@
             "description": "An explanation about the purpose of this instance.",
             "default": "",
             "examples": [
-                "1992-04-04"
+                "05-04-1992"
             ]
         }
     },
-    "additionalProperties": false
+    "additionalProperties": true
 }

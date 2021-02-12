@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const users = require('../services/users');
 const passportService = require('./auth');
-
 const Validator = require('jsonschema').Validator;
 const userSchema = require('../schemas/userSchema.json');
 const secretJWT = require('../jwt-key.json');
@@ -44,8 +43,10 @@ router.post('', checkSchema, async (req, res) => {
       userId: newUser.user_id
     });
   } catch (error) {
+    console.log(error);
     res.status(400).json({
       reason: error
+     
     });
   }
 });
@@ -74,21 +75,20 @@ router.get('/login', passportService.authenticate('basic', { session: false }), 
 router.put(
   '/',
   passportService.authenticate('jwt', { session: false }),
-  checkSchema,
   async (req, res) => {
  
     try {
       const result = await users.modify({
         id: req.user.id,
         username: req.body.username,
-        email: bcrypt.hashSync(req.body.password, 6)
+        email: req.body.email
       });
 
       if(result.changes == 0) {
         res.status(400).json({ reason: "User not found" });
       }
       else {
-        res.status(200).send();
+        res.status(200).send("User modified");
       }
     } catch (error) {
         res.status(400).json({
@@ -123,10 +123,10 @@ router.delete(
       const result = await users.deleteById(req.user.id);
 
       if(result == false) {
-        res.status(404).json({ reason: "User not found" });
+        res.status(404).send("User not found");
       }
       else {
-        res.status(200).send();
+        res.status(200).send("User deleted");
       }
 
     } catch (error) {
