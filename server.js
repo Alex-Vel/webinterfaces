@@ -1,7 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
-const bodyParser=require("body-parser");
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -13,7 +12,7 @@ const bodyParser = require("body-parser");
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser);
+
 
 //use the two routes
 app.use("/users", users);
