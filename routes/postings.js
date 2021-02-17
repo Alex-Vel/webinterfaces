@@ -1,30 +1,45 @@
 const fs = require("fs");
 const express = require("express");
 const multer = require("multer");
-
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const router = express.Router();
 const postings = require("../services/postings");
 const Validator = require("jsonschema").Validator;
 const passportService = require("./auth");
 const newPostingSchema = require("../schemas/newPostingSchema.json");
+// const fileFilter = (req, file, cb) => {
+//   if (
+//     file.mimetype === "image/png" ||
+//     file.mimetype === "image/jpg" ||
+//     file.mimetype === "image/jpeg"
+//   ) {
+//     cb(null, true);
+//   } else {
+//     cb(new Error("File format should be PNG,JPG,JPEG"), false);
+//   }
+// };
 
-const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg" ||
-    file.mimetype === "image/jpeg"
-  ) {
-    cb(null, true);
-  } else {
-    cb(new Error("File format should be PNG,JPG,JPEG"), false);
-  }
-};
 
-const multerUpload = multer({
-  dest: "uploads/",
-  limits: { fileSize: 1000000 },
-  fileFilter: fileFilter,
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  folder: '', // give cloudinary folder where you want to store images
+  allowedFormats: ['jpg', 'png'],
 });
+
+let multerUpload = multer({ storage: storage });
+
+cloudinary.config({ 
+  cloud_name: process.env.CLOUD, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET 
+});
+
+// const multerUpload = multer({
+//   dest: "uploads/",
+//   limits: { fileSize: 1000000 },
+//   fileFilter: fileFilter,
+// });
 
 function schemaCheck(req, res, next) {
   try {
@@ -127,43 +142,35 @@ router.post(
 
 //upload images to new posting
 
-router.post(
-  "/images/:posting_id",
-  passportService.authenticate("jwt", { session: false }),
-  multerUpload.array("postingImages", 4),
-  async (req, res) => {
-    let posting_id = req.params.posting_id;
-    let imageCounter = 0;
-    let imageLinks = {};
-    try {
-      req.files.forEach((f) => {
-        imageLinks[imageCounter] =
-          "./uploads/" +
-          ("_" + posting_id + "_" + imageCounter + "_") +
-          f.originalname;
-        fs.renameSync(
-          f.path,
-          "./uploads/" +
-            ("_" + posting_id + "_" + imageCounter + "_") +
-            f.originalname
-        );
-        imageCounter++;
-      });
+// router.post(
+//   "/images/:posting_id",
+//   passportService.authenticate("jwt", { session: false }),
+//   multerUpload.array("postingImages", 3),
+//   async (req, res) => {
+//     console.log(req.file);
+//     res.status(201);
+//     res.json(req.file);
+//     }
+// );
 
-      const imagesUpload = await postings.uploadImagesToPosting({
-        posting_id: posting_id,
-        postingImages: imageLinks,
-      });
-      res
-        .status(201)
-        .send("Completed image upload, total images uploaded: " + imageCounter);
-    } catch (error) {
-      res.status(400).json({
-        reason: error,
-      });
-    }
+router.post('/images/:posting_id',
+passportService.authenticate("jwt", { session: false }),
+multerUpload.single('images'), async function (req, res) {
+  console.log(req.file);
+
+  try {
+    const result = await postings.uploadImagesToPosting({
+     posting_id : req.params.posting_id,
+     image_link : req.file.path
+    });
+    res.status(201);
+    res.json(req.params.posting_id);
+  } catch (error) {
+    res.status(404);
   }
-);
+
+});
+
 
 router.delete(
   "/:posting_id",

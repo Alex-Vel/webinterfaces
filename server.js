@@ -7,11 +7,12 @@ const port = process.env.PORT || 4000;
 //init routes
 const users = require("./routes/users");
 const postings = require("./routes/postings");
-const bodyParser = require("body-parser");
+
 
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
+
 
 
 //use the two routes
@@ -28,10 +29,10 @@ let serverInstance = null;
 
 //assign an instance to the serverinstance var
 module.exports = {
-  start: function (env) {
+  start: function () {
     serverInstance = app.listen(port, () =>
       //console log server start if all is good
-      console.log(`Server is up and listening on ${port}...` + env)
+      console.log(`Server is up and listening on ${port}...`)
     );
   },
   close: function () {

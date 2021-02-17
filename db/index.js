@@ -3,7 +3,6 @@ const config = require('config');
 let postgres = require('pg');
 let pool = null;
 
-
 try {
   pool = new postgres.Pool({
     connectionLimit: 10,
@@ -14,12 +13,12 @@ try {
     database: config.get('database.name'),
     multipleStatements: true
   });
-console.log("db opened up! " + pool.options);
+console.log("db opened up! " + pool.options.database + " " + pool.options.host);
 
 
 } catch (error) {
   console.error('postgres pool create failed');
-  console.log("db error! " + pool.options);
+  console.log("db error! " + pool.options.database + pool.options.host);
   console.error(error);
 }
 

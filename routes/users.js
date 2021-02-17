@@ -66,7 +66,7 @@ router.get('/login', passportService.authenticate('basic', { session: false }), 
   /* Sign the token with payload, key and options.
      Detailed documentation of the signing here:
      https://github.com/auth0/node-jsonwebtoken#readme */
-  const token = jwt.sign(payload, secretJWT.secretKey, options);
+  const token = jwt.sign(payload, secretJWT, options);
 
   return res.json({ jwt: token });
 });

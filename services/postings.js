@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require("uuid");
    async function getPostingByUuid (uuid){
       return new Promise((resolve, reject) => {
         db.query(
-          "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE uuid = $1 ",
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE uuid = $1 ",
           [uuid],
           function (error, result) {
             if (result.rows[0].length < 1 || error != undefined) {
@@ -24,7 +24,7 @@ module.exports = {
   getPostingsByUserId: async (user_id) => {
     return new Promise((resolve, reject) => {
       db.query(
-        "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE user_id = $1 ",
+        "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE user_id = $1 ",
         [user_id],
         function (error, result) {
         //  console.log(result.rows);
@@ -65,17 +65,27 @@ module.exports = {
     });
   },
 
-  //upload images to posting
+  //upload images paths to posting
   uploadImagesToPosting: async (posting) => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        " UPDATE postings SET image_links = $1 WHERE posting_id = $2 ",[
-          posting.postingImages, posting.posting_id
-        ]
-      ).then((result) => {resolve(result.rowCount);})
-        .catch((error) => reject(error));
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await db
+          .query(
+            "UPDATE postings SET image_link = $1 WHERE posting_id = $2 " ,
+            [posting.image_link, posting.posting_id]
+          );
+        if (result.rowCount > 0) {
+        
+          resolve("image uploaded", true);
+        } else {
+          reject("image posting error");
+        }
+      } catch (error) {
+        console.log(error);
+        return reject(error);
+      }
     });
-  },
+    },
 
   //get posting by uuid
   getPostingByUuid:getPostingByUuid,
@@ -85,7 +95,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       console.log('getting posting with id.. ' + posting_id)
       db.query(
-        "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE posting_id = $1 ",
+        "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE posting_id = $1 ",
         [posting_id],
         function (error, result) {
           console.log('result is..');
@@ -106,7 +116,7 @@ module.exports = {
       return new Promise((resolve, reject) => {
         console.log('getting postings by search.. ' + searchParams)
         db.query(
-          "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE location = $1 AND WHERE category = $2 ",
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE location = $1 AND WHERE category = $2 ",
           [searchParams.location, searchParams.category],
           function (error, result) {
             console.log('result is..');
