@@ -1,7 +1,6 @@
 
 const config = require('config');
 let postgres = require('pg');
-const { post } = require('../routes/users');
 let pool = null;
 
 
@@ -15,12 +14,12 @@ try {
     database: config.get('database.name'),
     multipleStatements: true
   });
-console.log("db opened up! " + pool.options.database);
+console.log("db opened up! " + pool.options);
 
 
 } catch (error) {
   console.error('postgres pool create failed');
-  console.log("db error! " + pool.options.database);
+  console.log("db error! " + pool.options);
   console.error(error);
 }
 
