@@ -6,7 +6,8 @@ const JwtStrategy = require('passport-jwt').Strategy,
 const bcrypt = require("bcrypt");
 const db = require("../db/index");
 
-//const secretJWT = require("../jwt-key.json");
+const secretJWT = env.process.secretJwt;
+
 
 
 
@@ -47,7 +48,7 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 
 /* This is the secret signing key.
    You should NEVER store it in code  */
-jwtOptions.secretOrKey = (process.env.secretJwt);
+jwtOptions.secretOrKey = secretJwt;
 
 passport.use(
   new JwtStrategy(jwtOptions, function (jwt_payload, done) {

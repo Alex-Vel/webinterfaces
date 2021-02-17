@@ -6,7 +6,7 @@ const users = require('../services/users');
 const passportService = require('./auth');
 const Validator = require('jsonschema').Validator;
 const userSchema = require('../schemas/userSchema.json');
-const secretJWT = require('../jwt-key.json');
+const secretJWT = env.process.secretJwt;
 
 
 
