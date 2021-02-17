@@ -61,6 +61,27 @@ router.get(
   }
 );
 
+//get postings by search params
+router.get(
+  "/search/",
+  passportService.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      console.log(req.query);
+      let userPostings = await postings.getPostingsBySearch(req.query);
+
+      res.status(200).json({
+        postings: userPostings,
+      });
+    } catch (error) {
+      res.status(400).json({
+        reason: error,
+      });
+    }
+  }
+);
+
+
 // get posting by id
 router.get("/:posting_id", async (req, res) => {
   console.log('getting posting with params.. ' + req.params.posting_id)

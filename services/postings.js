@@ -101,6 +101,27 @@ module.exports = {
     });
   },
 
+    //get posting by search
+    getPostingBySearch: async (searchParams) => {
+      return new Promise((resolve, reject) => {
+        console.log('getting postings by search.. ' + searchParams)
+        db.query(
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_links FROM postings WHERE location = $1 AND WHERE category = $2 ",
+          [searchParams.location, searchParams.category],
+          function (error, result) {
+            console.log('result is..');
+            console.log(result.rows[0]);
+            if (result.rows[0] == undefined|| error != undefined) {
+              reject("no such posting");
+            } else {
+              console.log(result.rows);
+              resolve(result.rows[0]);
+            }
+          }
+        );
+      });
+    },
+
   //delete a posting by its id, current user id required
   deletePostingById: async (posting_id, user_id) => {
     return new Promise(async (resolve, reject) => {

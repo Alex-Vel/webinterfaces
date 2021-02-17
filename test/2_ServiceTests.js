@@ -10,13 +10,7 @@ let userId = null;
 let secondUserId = null;
 
 describe("User Service", function () {
-  // before(async function() {
-  //   await dbService.init('db.test.sqlite');
-  // });
 
-  // after(async function() {
-  //   await dbService.close();
-  // });
   before(async function () {
     apiServer.start("test");
   });
@@ -177,7 +171,8 @@ describe("User Service", function () {
         });
     });
 
-    
+  //clean database 
+
   it("Should delete the last user successfully", async function () {
     let startingUserCount = null;
     await users
