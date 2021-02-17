@@ -6,7 +6,7 @@ const JwtStrategy = require('passport-jwt').Strategy,
 const bcrypt = require("bcrypt");
 const db = require("../db/index");
 
-const secretJWT = env.process.secretJwt;
+const secretJWT = process.env.secretJwt;
 
 
 
