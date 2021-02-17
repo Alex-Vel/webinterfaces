@@ -34,7 +34,7 @@ module.exports = {
     );
   },
   close: function () {
-    //close server for tests
+    //close server for end of tests
     serverInstance.close();
   },
 };

@@ -1,4 +1,4 @@
-process.env.NODE_ENV = "test";
+
 const config = require('config');
 let postgres = require('pg');
 const { post } = require('../routes/users');
