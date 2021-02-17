@@ -1,7 +1,7 @@
 {
   "database": {
     "name": "web_interfaces",
-    "host": "localhost",
+    "host": "webinterfaces-1.cqkwa7sxpohl.us-east-1.rds.amazonaws.com",
     "port": "5432"
   }
 }
