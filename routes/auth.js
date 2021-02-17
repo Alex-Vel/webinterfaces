@@ -48,7 +48,7 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 
 /* This is the secret signing key.
    You should NEVER store it in code  */
-jwtOptions.secretOrKey = secretJwt;
+jwtOptions.secretOrKey = secretJWT;
 
 passport.use(
   new JwtStrategy(jwtOptions, function (jwt_payload, done) {
