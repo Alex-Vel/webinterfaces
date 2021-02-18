@@ -8,6 +8,7 @@ const postings = require("../services/postings");
 const Validator = require("jsonschema").Validator;
 const passportService = require("./auth");
 const newPostingSchema = require("../schemas/newPostingSchema.json");
+const { interfaces } = require("mocha");
 // const fileFilter = (req, file, cb) => {
 //   if (
 //     file.mimetype === "image/png" ||
@@ -100,10 +101,13 @@ router.get(
 // get posting by id
 router.get("/:posting_id", async (req, res) => {
   console.log('getting posting with params.. ' + req.params.posting_id)
+  if(Number.isInteger(req.params.posting_id))
+  {
   try {
+
     const posting = await postings.getPostingById(req.params.posting_id);
     if (posting === undefined) {
-      res.status(404).send();
+      res.status(404).send("please provide valid posting id");
     } else {
       res.status(200).json(posting);
     }
@@ -112,6 +116,12 @@ router.get("/:posting_id", async (req, res) => {
       reason: error,
     });
   }
+}
+else
+{
+  res.status(404).send("please provide valid posting id")
+}
+
 });
 
 //create new posting
