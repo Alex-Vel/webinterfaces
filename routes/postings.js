@@ -1,4 +1,3 @@
-const fs = require("fs");
 const express = require("express");
 const multer = require("multer");
 const cloudinary = require('cloudinary').v2;
@@ -8,7 +7,7 @@ const postings = require("../services/postings");
 const Validator = require("jsonschema").Validator;
 const passportService = require("./auth");
 const newPostingSchema = require("../schemas/newPostingSchema.json");
-const { interfaces } = require("mocha");
+
 // const fileFilter = (req, file, cb) => {
 //   if (
 //     file.mimetype === "image/png" ||
