@@ -70,7 +70,7 @@ router.get(
       });
     } catch (error) {
       res.status(400).json({
-        reason: error,
+        reason: error
       });
     }
   }
@@ -90,7 +90,7 @@ router.get(
       });
     } catch (error) {
       res.status(400).json({
-        reason: error,
+        reason: error
       });
     }
   }
@@ -106,19 +106,19 @@ router.get("/:posting_id", async (req, res) => {
 
     const posting = await postings.getPostingById(req.params.posting_id);
     if (posting === undefined) {
-      res.status(404).send("please provide valid posting id");
+      res.status(404).json({reaspm: "posting not found"});
     } else {
       res.status(200).json(posting);
     }
   } catch (error) {
     res.status(404).json({
-      reason: error,
+      reason: error
     });
   }
 }
 else
 {
-  res.status(404).send("please provide valid posting id")
+  res.status(404).json({reason: "please provide valid posting id"})
 }
 
 });
@@ -143,7 +143,7 @@ router.post(
       res.status(201).json(newPosting);
     } catch (error) {
       res.status(400).json({
-        reason: error,
+        reason: error
       });
     }
   }
