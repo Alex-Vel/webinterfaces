@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const router = express.Router();
 const postings = require("../services/postings");
 const Validator = require("jsonschema").Validator;
@@ -20,19 +20,18 @@ const newPostingSchema = require("../schemas/newPostingSchema.json");
 //   }
 // };
 
-
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  folder: '', // give cloudinary folder where you want to store images
-  allowedFormats: ['jpg', 'png'],
+  folder: "", // give cloudinary folder where you want to store images
+  allowedFormats: ["jpg", "png"],
 });
 
 let multerUpload = multer({ storage: storage });
 
-cloudinary.config({ 
-  cloud_name: process.env.CLOUD, 
-  api_key: process.env.API_KEY, 
-  api_secret: process.env.API_SECRET 
+cloudinary.config({
+  cloud_name: process.env.CLOUD,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 
 // const multerUpload = multer({
@@ -70,7 +69,7 @@ router.get(
       });
     } catch (error) {
       res.status(400).json({
-        reason: error
+        reason: error,
       });
     }
   }
@@ -90,37 +89,26 @@ router.get(
       });
     } catch (error) {
       res.status(400).json({
-        reason: error
+        reason: error,
       });
     }
   }
 );
 
-
 // get posting by id
 router.get("/:posting_id", async (req, res) => {
-  console.log('getting posting with params.. ' + req.params.posting_id)
-  if(Number.isInteger(req.params.posting_id))
-  {
-  try {
-
-    const posting = await postings.getPostingById(req.params.posting_id);
-    if (posting === undefined) {
-      res.status(404).json({reaspm: "posting not found"});
-    } else {
+  if (Number.isInteger(parseInt(req.params.posting_id)) == true) {
+    try {
+      const posting = await postings.getPostingById(req.params.posting_id);
       res.status(200).json(posting);
+    } catch (error) {
+      res.status(404).json({
+        reason: error,
+      });
     }
-  } catch (error) {
-    res.status(404).json({
-      reason: error
-    });
+  } else {
+    res.status(404).json({ reason: "please provide valid posting id" });
   }
-}
-else
-{
-  res.status(404).json({reason: "please provide valid posting id"})
-}
-
 });
 
 //create new posting
@@ -143,7 +131,7 @@ router.post(
       res.status(201).json(newPosting);
     } catch (error) {
       res.status(400).json({
-        reason: error
+        reason: error,
       });
     }
   }
@@ -162,24 +150,25 @@ router.post(
 //     }
 // );
 
-router.post('/images/:posting_id',
-passportService.authenticate("jwt", { session: false }),
-multerUpload.single('images'), async function (req, res) {
-  console.log(req.file);
+router.post(
+  "/images/:posting_id",
+  passportService.authenticate("jwt", { session: false }),
+  multerUpload.single("images"),
+  async function (req, res) {
+    console.log(req.file);
 
-  try {
-    const result = await postings.uploadImagesToPosting({
-     posting_id : req.params.posting_id,
-     image_link : req.file.path
-    });
-    res.status(201);
-    res.json(req.params.posting_id);
-  } catch (error) {
-    res.status(404);
+    try {
+      const result = await postings.uploadImagesToPosting({
+        posting_id: req.params.posting_id,
+        image_link: req.file.path,
+      });
+      res.status(201);
+      res.json(req.params.posting_id);
+    } catch (error) {
+      res.status(404);
+    }
   }
-
-});
-
+);
 
 router.delete(
   "/:posting_id",
