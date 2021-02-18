@@ -98,8 +98,6 @@ module.exports = {
         "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE posting_id = $1 ",
         [posting_id],
         function (error, result) {
-          console.log('result is..');
-          console.log(result.rows[0]);
           if (result.rows[0] == undefined|| error != undefined) {
             reject("no such posting");
           } else {
@@ -119,8 +117,6 @@ module.exports = {
           "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE location = $1 AND WHERE category = $2 ",
           [searchParams.location, searchParams.category],
           function (error, result) {
-            console.log('result is..');
-            console.log(result.rows[0]);
             if (result.rows[0] == undefined|| error != undefined) {
               reject("no such posting");
             } else {
