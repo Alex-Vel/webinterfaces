@@ -60,6 +60,7 @@ router.get(
   "/user/:user_id",
   passportService.authenticate("jwt", { session: false }),
   async (req, res) => {
+    if (Number.isInteger(parseInt(req.params.user_id)) == true) {
     try {
       console.log(req.params.user_id);
       let userPostings = await postings.getPostingsByUserId(req.params.user_id);
@@ -73,6 +74,10 @@ router.get(
       });
     }
   }
+  else {
+    res.status(400).json({ reason: "non valid user_id in cache" });
+  }
+}
 );
 
 //get postings by search params
@@ -107,7 +112,7 @@ router.get("/:posting_id", async (req, res) => {
       });
     }
   } else {
-    res.status(404).json({ reason: "please provide valid posting id" });
+    res.status(400).json({ reason: "please provide valid posting id" });
   }
 });
 
