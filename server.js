@@ -7,6 +7,7 @@ const port = process.env.PORT || 4000;
 //init routes
 const users = require("./routes/users");
 const postings = require("./routes/postings");
+const documentation = require("./routes/documentation");
 
 
 app.use(express.static("public"));
@@ -18,6 +19,7 @@ app.use(cors());
 //use the two routes
 app.use("/users", users);
 app.use("/postings", postings);
+app.use("/documentation", documentation);
 
 app.get("/", (req, res) => {
   res.status(200);
