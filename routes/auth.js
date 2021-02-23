@@ -42,12 +42,7 @@ passport.use(new BasicStrategy(
 
 let jwtOptions = {};
 
-/* Configure the passport-jwt module to expect JWT
-   in headers from Authorization field as Bearer token */
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-
-/* This is the secret signing key.
-   You should NEVER store it in code  */
 jwtOptions.secretOrKey = secretJWT;
 
 passport.use(
