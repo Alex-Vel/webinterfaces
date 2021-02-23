@@ -60,7 +60,7 @@ router.get('/login', passportService.authenticate('basic', { session: false }), 
   };
 
   const options = {
-    expiresIn: '30m'
+    expiresIn: '60m'
   }
 
   /* Sign the token with payload, key and options.
