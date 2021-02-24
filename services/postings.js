@@ -27,7 +27,6 @@ module.exports = {
         "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE user_id = $1 ",
         [user_id],
         function (error, result) {
-        //  console.log(result.rows);
           if (result.rows.length < 1 || error != undefined) {
             reject("no postings");
           } else {
@@ -98,7 +97,7 @@ module.exports = {
         "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE posting_id = $1 ",
         [posting_id],
         function (error, result) {
-          if (result.rows[0] == undefined|| error != undefined) {
+          if (result.rows[0] == undefined || error != undefined) {
             reject("no such posting");
           } else {
             console.log(result.rows);
@@ -111,21 +110,67 @@ module.exports = {
 
     //get posting by search
     getPostingBySearch: async (searchParams) => {
+      if(searchParams.location && !searchParams.category)
+      {
+        
       return new Promise((resolve, reject) => {
-        console.log('getting postings by search.. ' + searchParams)
+        console.log('getting postings by location.. ' + searchParams.location)
+
         db.query(
-          "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE location = $1 AND WHERE category = $2 ",
-          [searchParams.location, searchParams.category],
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE location = $1",
+          [searchParams.location],
           function (error, result) {
-            if (result.rows[0] == undefined|| error != undefined) {
+            if (result.rows[0] == undefined || error != undefined) {
               reject("no such posting");
             } else {
               console.log(result.rows);
-              resolve(result.rows[0]);
+              resolve(result.rows);
             }
           }
         );
       });
+      }
+      else if(!searchParams.location && searchParams.category)
+      {
+        
+      return new Promise((resolve, reject) => {
+        console.log('getting postings by category.. ' + searchParams.category)
+
+        db.query(
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE category = $1",
+          [searchParams.category],
+          function (error, result) {
+            if (result.rows[0] == undefined || error != undefined) {
+              reject("no such posting");
+            } else {
+              console.log(result.rows);
+              resolve(result.rows);
+            }
+          }
+        );
+      });
+      }
+      else if(searchParams.location && searchParams.category)
+      {
+        
+      return new Promise((resolve, reject) => {
+        console.log('getting postings by category and location .. ');
+        console.log(searchParams);
+
+        db.query(
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE location = $1 AND category = $2",
+          [searchParams.location, searchParams.category],
+          function (error, result) {
+            if (result.rows[0] == undefined || error != undefined) {
+              reject("no such posting");
+            } else {
+              console.log(result.rows);
+              resolve(result.rows);
+            }
+          }
+        );
+      });
+      }
     },
 
   //delete a posting by its id, current user id required
