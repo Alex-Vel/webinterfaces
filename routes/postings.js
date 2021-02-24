@@ -93,8 +93,27 @@ router.get(
         postings: userPostings
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(404).json({
         reason: error,
+      });
+    }
+  }
+);
+
+//get fresh postings
+router.get(
+  "/fresh",
+  async (req, res) => {
+    try {
+      console.log(req.query);
+      let freshPostings = await postings.getFreshPostings();
+
+      res.status(200).json({
+        postings: freshPostings
+      });
+    } catch (error) {
+      res.status(404).json({
+        reason: error
       });
     }
   }

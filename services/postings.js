@@ -108,6 +108,38 @@ module.exports = {
     });
   },
 
+  getFreshPostings: async () => {
+  let freshPostings =[];
+    return new Promise((resolve, reject) => {
+      console.log('getting fresh postings');
+      db.query(
+        "SELECT posting_id, title, description, location, shipping_method, price, category, image_link, create_date FROM postings ORDER BY create_date DESC ",
+        function (error, result) {
+          if (result.rows[0] == undefined || error != undefined) {
+            reject("no such posting");
+          } else {
+
+            for(let i = 0; i<5; i++)
+            {
+              if(result.rows[i] != undefined)
+              {
+                freshPostings.push(result.rows[i]);
+              }
+
+            }
+
+            console.log(result.rows);
+            resolve(
+              freshPostings
+             // result.rows[0]
+              
+              );
+          }
+        }
+      );
+    });
+  },
+
     //get posting by search
     getPostingBySearch: async (searchParams) => {
       if(searchParams.location && !searchParams.category)
