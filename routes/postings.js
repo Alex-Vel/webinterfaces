@@ -83,7 +83,7 @@ router.get(
 //get postings by search params
 router.get(
   "/search/",
-  passportService.authenticate("jwt", { session: false }),
+ // passportService.authenticate("jwt", { session: false }), no need for authentication here
   async (req, res) => {
     try {
       console.log(req.query);
