@@ -108,6 +108,24 @@ module.exports = {
     });
   },
 
+    //get ALL
+    getAllPostings: async () => {
+      return new Promise((resolve, reject) => {
+        console.log('getting all postings');
+        db.query(
+          "SELECT posting_id, title, description, location, shipping_method, price, category, image_link, create_date FROM postings ORDER BY create_date DESC ",
+          function (error, result) {
+            if (result.rows[0] == undefined || error != undefined) {
+              reject("no such posting");
+            } else {
+              console.log(result.rows);
+              resolve(result.rows);
+            }
+          }
+        );
+      });
+    },
+
   getFreshPostings: async () => {
   let freshPostings =[];
     return new Promise((resolve, reject) => {

@@ -104,8 +104,7 @@ router.get(
 router.get(
   "/fresh",
   async (req, res) => {
-    try {
-      console.log(req.query);
+    try { 
       let freshPostings = await postings.getFreshPostings();
 
       res.status(200).json({
@@ -118,6 +117,25 @@ router.get(
     }
   }
 );
+
+//get ALL postings
+router.get(
+  "/all",
+  async (req, res) => {
+    try { 
+      let allPostings = await postings.getAllPostings();
+
+      res.status(200).json({
+        postings: allPostings
+      });
+    } catch (error) {
+      res.status(404).json({
+        reason: error
+      });
+    }
+  }
+);
+
 
 // get posting by id
 router.get("/:posting_id", async (req, res) => {
@@ -134,6 +152,8 @@ router.get("/:posting_id", async (req, res) => {
     res.status(400).json({ reason: "please provide valid posting id" });
   }
 });
+
+
 
 //create new posting
 router.post(
