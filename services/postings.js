@@ -22,6 +22,7 @@ const { v4: uuidv4 } = require("uuid");
 module.exports = {
   //get all postings by user id service
   getPostingsByUserId: async (user_id) => {
+    user_id = parseInt(user_id);
     return new Promise((resolve, reject) => {
       db.query(
         "SELECT posting_id, title, description, location, shipping_method, price, category, create_date, image_link FROM postings WHERE user_id = $1 ORDER BY create_date DESC ",
@@ -92,6 +93,7 @@ module.exports = {
   //get posting by id
   getPostingById: async (posting_id) => {
     return new Promise((resolve, reject) => {
+      posting_id = parseInt(posting_id);
       console.log('getting posting with id.. ' + posting_id)
       db.query(
         "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE posting_id = $1 ",
@@ -225,6 +227,8 @@ module.exports = {
 
   //delete a posting by its id, current user id required
   deletePostingById: async (posting_id, user_id) => {
+    user_id = parseInt(user_id);
+    posting_id = parseInt(posting_id);
     return new Promise(async (resolve, reject) => {
       try {
         const result = await db.query(
@@ -237,12 +241,13 @@ module.exports = {
         } else {
           reject("no such posting");
         }
-      } catch {
+      } catch(error) {
         reject(error);
       }
     });
   },
   updatePostingById: async (posting_id, updatedPosting) => {
+    posting_id = parseInt(posting_id);
     console.log('editting posting..' + posting_id)
     console.log(updatedPosting);
     return new Promise(async (resolve, reject) => {

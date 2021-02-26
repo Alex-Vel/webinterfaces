@@ -95,6 +95,7 @@ module.exports = {
   getUserById: getUserById,
   getUserByName: getUserByName,
   deleteById: async (userId) => {
+    user_id = parseInt(user_id);
     return new Promise(async (resolve, reject) => {
       try {
         const result = await db.query("DELETE FROM users WHERE user_id = $1 ", [
