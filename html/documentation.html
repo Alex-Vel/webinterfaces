@@ -199,15 +199,18 @@
   <div class="method-summary"></div>
   <h4><a href="#Postings">Postings</a></h4>
   <ul>
-  <li><a href="#deletePostingsPostingsID"><code><span class="http-method">delete</span> /postings</code></a></li>
+  <li><a href="#deletePostingsPostingsID"><code><span class="http-method">delete</span> /postings/{postingsID}</code></a></li>
+  <li><a href="#getPostingsAll"><code><span class="http-method">get</span> /postings/all</code></a></li>
+  <li><a href="#getPostingsFresh"><code><span class="http-method">get</span> /postings/fresh</code></a></li>
   <li><a href="#getPostingsPostingsID"><code><span class="http-method">get</span> /postings/{postingsID}</code></a></li>
   <li><a href="#getPostingsSearch"><code><span class="http-method">get</span> /postings/search</code></a></li>
   <li><a href="#getPostingsUserUserID"><code><span class="http-method">get</span> /postings/user/{userID}</code></a></li>
   <li><a href="#postPostings"><code><span class="http-method">post</span> /postings</code></a></li>
-  <li><a href="#putPostingsPostingsID"><code><span class="http-method">put</span> /postings</code></a></li>
+  <li><a href="#putPostingsPostingsID"><code><span class="http-method">put</span> /postings/{postingsID}</code></a></li>
   </ul>
   <h4><a href="#Users">Users</a></h4>
   <ul>
+  <li><a href="#deleteUsers"><code><span class="http-method">delete</span> /users</code></a></li>
   <li><a href="#getUsersLogin"><code><span class="http-method">get</span> /users/login</code></a></li>
   <li><a href="#getUsersUserId"><code><span class="http-method">get</span> /users/{userId}</code></a></li>
   <li><a href="#postUser"><code><span class="http-method">post</span> /users</code></a></li>
@@ -218,10 +221,15 @@
   <div class="method"><a name="deletePostingsPostingsID"></a>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
-    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /postings</code></pre></div>
+    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /postings/{postingsID}</code></pre></div>
     <div class="method-summary"> (<span class="nickname">deletePostingsPostingsID</span>)</div>
     <div class="method-notes">Delete posting</div>
 
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">postingsID (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; id of the posting to retrieve </div>    </div>  <!-- field-items -->
 
 
 
@@ -239,6 +247,131 @@
         <a href="#"></a>
     <h4 class="field-label">401</h4>
     Unauthorized
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getPostingsAll"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /postings/all</code></pre></div>
+    <div class="method-summary">Your GET endpoint (<span class="nickname">getPostingsAll</span>)</div>
+    <div class="method-notes">Get all postings</div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_2">inline_response_200_2</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "postings" : [ {
+    "image_link" : "image_link",
+    "shipping_method" : "shipping_method",
+    "price" : "price",
+    "description" : "description",
+    "posting_id" : 0,
+    "location" : "location",
+    "title" : "title",
+    "category" : "category"
+  }, {
+    "image_link" : "image_link",
+    "shipping_method" : "shipping_method",
+    "price" : "price",
+    "description" : "description",
+    "posting_id" : 0,
+    "location" : "location",
+    "title" : "title",
+    "category" : "category"
+  } ]
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#inline_response_200_2">inline_response_200_2</a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getPostingsFresh"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /postings/fresh</code></pre></div>
+    <div class="method-summary">Your GET endpoint (<span class="nickname">getPostingsFresh</span>)</div>
+    <div class="method-notes">get five newest postings on the database</div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_2">inline_response_200_2</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "postings" : [ {
+    "image_link" : "image_link",
+    "shipping_method" : "shipping_method",
+    "price" : "price",
+    "description" : "description",
+    "posting_id" : 0,
+    "location" : "location",
+    "title" : "title",
+    "category" : "category"
+  }, {
+    "image_link" : "image_link",
+    "shipping_method" : "shipping_method",
+    "price" : "price",
+    "description" : "description",
+    "posting_id" : 0,
+    "location" : "location",
+    "title" : "title",
+    "category" : "category"
+  } ]
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#inline_response_200_2">inline_response_200_2</a>
+    <h4 class="field-label">404</h4>
+    Not Found
         <a href="#"></a>
   </div> <!-- method -->
   <hr/>
@@ -260,9 +393,26 @@
 
 
 
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#retrievePosting">retrievePosting</a>
+      
+    </div>
 
     <!--Todo: process Response Object and its headers, schema, examples -->
 
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "image_link" : "image_link",
+  "shipping_method" : "shipping_method",
+  "price" : "price",
+  "description" : "description",
+  "posting_id" : 0,
+  "location" : "location",
+  "title" : "title",
+  "category" : "category"
+}</code></pre>
 
     <h3 class="field-label">Produces</h3>
     This API call produces the following media types according to the <span class="header">Accept</span> request header;
@@ -274,10 +424,13 @@
     <h3 class="field-label">Responses</h3>
     <h4 class="field-label">200</h4>
     OK
-        <a href="#"></a>
+        <a href="#retrievePosting">retrievePosting</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#inline_response_400">inline_response_400</a>
     <h4 class="field-label">404</h4>
     Not Found
-        <a href="#retrievePosting">retrievePosting</a>
+        <a href="#inline_response_400">inline_response_400</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="getPostingsSearch"></a>
@@ -302,7 +455,7 @@
 
     <h3 class="field-label">Return type</h3>
     <div class="return-type">
-      <a href="#inline_response_200">inline_response_200</a>
+      <a href="#inline_response_200_1">inline_response_200_1</a>
       
     </div>
 
@@ -311,14 +464,25 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>{
-  "Postings" : {
-    "price" : "price",
+  "Postings" : [ {
+    "image_link" : "image_link",
     "shipping_method" : "shipping_method",
+    "price" : "price",
     "description" : "description",
     "posting_id" : 0,
+    "location" : "location",
     "title" : "title",
     "category" : "category"
-  }
+  }, {
+    "image_link" : "image_link",
+    "shipping_method" : "shipping_method",
+    "price" : "price",
+    "description" : "description",
+    "posting_id" : 0,
+    "location" : "location",
+    "title" : "title",
+    "category" : "category"
+  } ]
 }</code></pre>
 
     <h3 class="field-label">Produces</h3>
@@ -331,7 +495,10 @@
     <h3 class="field-label">Responses</h3>
     <h4 class="field-label">200</h4>
     OK
-        <a href="#inline_response_200">inline_response_200</a>
+        <a href="#inline_response_200_1">inline_response_200_1</a>
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: example-1</div>
+    <pre class="example"><code>{&quot;Postings&quot;:[{&quot;posting_id&quot;:1,&quot;title&quot;:&quot;string&quot;,&quot;description&quot;:&quot;string&quot;,&quot;location&quot;:&quot;string&quot;,&quot;shipping_method&quot;:&quot;string&quot;,&quot;price&quot;:&quot;string&quot;,&quot;category&quot;:&quot;string&quot;,&quot;image_link&quot;:&quot;string&quot;}]}</code></pre>
     <h4 class="field-label">400</h4>
     Bad Request
         <a href="#"></a>
@@ -355,15 +522,52 @@
 
 
 
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_2">inline_response_200_2</a>
+      
+    </div>
 
     <!--Todo: process Response Object and its headers, schema, examples -->
 
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "postings" : [ {
+    "image_link" : "image_link",
+    "shipping_method" : "shipping_method",
+    "price" : "price",
+    "description" : "description",
+    "posting_id" : 0,
+    "location" : "location",
+    "title" : "title",
+    "category" : "category"
+  }, {
+    "image_link" : "image_link",
+    "shipping_method" : "shipping_method",
+    "price" : "price",
+    "description" : "description",
+    "posting_id" : 0,
+    "location" : "location",
+    "title" : "title",
+    "category" : "category"
+  } ]
+}</code></pre>
 
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
 
     <h3 class="field-label">Responses</h3>
     <h4 class="field-label">200</h4>
     OK
-        <a href="#"></a>
+        <a href="#inline_response_200_2">inline_response_200_2</a>
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: example-1</div>
+    <pre class="example"><code>{&quot;postings&quot;:[{&quot;posting_id&quot;:1,&quot;title&quot;:&quot;string&quot;,&quot;description&quot;:&quot;string&quot;,&quot;location&quot;:&quot;string&quot;,&quot;shipping_method&quot;:&quot;string&quot;,&quot;price&quot;:&quot;string&quot;,&quot;category&quot;:&quot;string&quot;,&quot;image_link&quot;:&quot;string&quot;}]}</code></pre>
     <h4 class="field-label">401</h4>
     Unauthorized
         <a href="#"></a>
@@ -393,27 +597,56 @@
 
 
 
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#retrievePosting">retrievePosting</a>
+      
+    </div>
 
     <!--Todo: process Response Object and its headers, schema, examples -->
 
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "image_link" : "image_link",
+  "shipping_method" : "shipping_method",
+  "price" : "price",
+  "description" : "description",
+  "posting_id" : 0,
+  "location" : "location",
+  "title" : "title",
+  "category" : "category"
+}</code></pre>
 
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+      <li><code>text/html</code></li>
+    </ul>
 
     <h3 class="field-label">Responses</h3>
     <h4 class="field-label">201</h4>
     Created
-        <a href="#"></a>
+        <a href="#retrievePosting">retrievePosting</a>
     <h4 class="field-label">400</h4>
     Bad Request
-        <a href="#"></a>
+        <a href="#Object">Object</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="putPostingsPostingsID"></a>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
-    <pre class="put"><code class="huge"><span class="http-method">put</span> /postings</code></pre></div>
+    <pre class="put"><code class="huge"><span class="http-method">put</span> /postings/{postingsID}</code></pre></div>
     <div class="method-summary"> (<span class="nickname">putPostingsPostingsID</span>)</div>
-    <div class="method-notes">Modify posting</div>
+    <div class="method-notes">edit posting</div>
 
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">postingsID (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; id of the posting to retrieve </div>    </div>  <!-- field-items -->
 
     <h3 class="field-label">Consumes</h3>
     This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
@@ -446,9 +679,39 @@
     <h4 class="field-label">401</h4>
     Unauthorized
         <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
   </div> <!-- method -->
   <hr/>
   <h1><a name="Users">Users</a></h1>
+  <div class="method"><a name="deleteUsers"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /users</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">deleteUsers</span>)</div>
+    <div class="method-notes">Delete the logged in user</div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
   <div class="method"><a name="getUsersLogin"></a>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -467,7 +730,7 @@
 
     <h3 class="field-label">Return type</h3>
     <div class="return-type">
-      <a href="#inline_response_200_1">inline_response_200_1</a>
+      <a href="#inline_response_200_3">inline_response_200_3</a>
       
     </div>
 
@@ -489,7 +752,7 @@
     <h3 class="field-label">Responses</h3>
     <h4 class="field-label">200</h4>
     OK
-        <a href="#inline_response_200_1">inline_response_200_1</a>
+        <a href="#inline_response_200_3">inline_response_200_3</a>
     <h4 class="field-label">401</h4>
     Unauthorized
         <a href="#"></a>
@@ -589,7 +852,7 @@
 
     <h3 class="field-label">Return type</h3>
     <div class="return-type">
-      <a href="#createUser">createUser</a>
+      <a href="#inline_response_200">inline_response_200</a>
       
     </div>
 
@@ -598,12 +861,7 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>{
-  "password" : "",
-  "birth_date" : "1997-10-31T00:00:00.000+0000",
-  "location" : "location",
-  "email" : "",
-  "user_config" : { },
-  "username" : "username"
+  "userId" : 0.8008281904610115
 }</code></pre>
 
     <h3 class="field-label">Produces</h3>
@@ -612,21 +870,19 @@
     <ul>
       <li><code>application/json</code></li>
       <li><code>application/xml</code></li>
+      <li><code>text/html</code></li>
     </ul>
 
     <h3 class="field-label">Responses</h3>
     <h4 class="field-label">200</h4>
     User Created
-        <a href="#createUser">createUser</a>
+        <a href="#inline_response_200">inline_response_200</a>
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: example-1</div>
     <pre class="example"><code>{&quot;username&quot;:&quot;string&quot;,&quot;email&quot;:&quot;user@example.com&quot;,&quot;birth_date&quot;:&quot;1997-10-31&quot;,&quot;password&quot;:&quot;pa$$word&quot;,&quot;location&quot;:&quot;string&quot;,&quot;user_config&quot;:{}}</code></pre>
     <h4 class="field-label">400</h4>
     Bad Request
-        <a href="#"></a>
-    <h4 class="field-label">404</h4>
-    Missing Required Information
-        <a href="#"></a>
+        <a href="#String">String</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="putUsers"></a>
@@ -679,7 +935,9 @@
     <li><a href="#editUser"><code>editUser</code> - editUser</a></li>
     <li><a href="#inline_response_200"><code>inline_response_200</code></a></li>
     <li><a href="#inline_response_200_1"><code>inline_response_200_1</code></a></li>
-    <li><a href="#loginUser"><code>loginUser</code> - loginUser</a></li>
+    <li><a href="#inline_response_200_2"><code>inline_response_200_2</code></a></li>
+    <li><a href="#inline_response_200_3"><code>inline_response_200_3</code></a></li>
+    <li><a href="#inline_response_400"><code>inline_response_400</code></a></li>
     <li><a href="#retrievePosting"><code>retrievePosting</code> - retrievePosting</a></li>
     <li><a href="#retrieveUser"><code>retrieveUser</code> - retrieveUser</a></li>
   </ol>
@@ -719,6 +977,9 @@
 <div class="param">location (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">price (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
 <div class="param">category (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">shipping_method (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">posting_config (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -733,22 +994,35 @@
     <h3><a name="inline_response_200"><code>inline_response_200</code></a> <a class="up" href="#__Models">Up</a></h3>
     
     <div class="field-items">
-      <div class="param">Postings (optional)</div><div class="param-desc"><span class="param-type"><a href="#retrievePosting">retrievePosting</a></span>  </div>
+      <div class="param">userId (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
     <h3><a name="inline_response_200_1"><code>inline_response_200_1</code></a> <a class="up" href="#__Models">Up</a></h3>
     
     <div class="field-items">
+      <div class="param">Postings (optional)</div><div class="param-desc"><span class="param-type"><a href="#retrievePosting">array[retrievePosting]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_2"><code>inline_response_200_2</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">postings (optional)</div><div class="param-desc"><span class="param-type"><a href="#retrievePosting">array[retrievePosting]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_3"><code>inline_response_200_3</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
       <div class="param">jwt (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
-    <h3><a name="loginUser"><code>loginUser</code> - loginUser</a> <a class="up" href="#__Models">Up</a></h3>
+    <h3><a name="inline_response_400"><code>inline_response_400</code></a> <a class="up" href="#__Models">Up</a></h3>
     
     <div class="field-items">
-      <div class="param">username </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
-<div class="param">password </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: password</div>
+      <div class="param">reason (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -758,9 +1032,11 @@
       <div class="param">posting_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
 <div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">location (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">shipping_method (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">price (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">category (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
-<div class="param">shipping_method (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">image_link (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
