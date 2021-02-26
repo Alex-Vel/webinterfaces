@@ -1,0 +1,564 @@
+openapi: 3.0.0
+info:
+  title: web interfaces store
+  description: web market application
+  version: '1.0'
+  contact:
+    name: Alexander
+  license:
+    name: MIT
+servers:
+  - url: 'http://localhost:4000'
+    description: Development
+  - url: 'https://web-interfaces-test.herokuapp.com'
+    description: Production
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        description: Id of an existing user.
+        required: true
+    get:
+      summary: Get User Info by User ID
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/retrieveUser'
+              examples:
+                example-1:
+                  value:
+                    user_id: 0
+                    username: string
+                    email: user@example.com
+                    location: string
+        '404':
+          description: User Not Found
+      operationId: get-users-userId
+      description: Get user info
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: userId
+          description: the id of the user being retrieved
+          required: true
+      security:
+        - passport-jwt: []
+  /users:
+    post:
+      summary: Create New User
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: number
+              examples:
+                example-1:
+                  value:
+                    username: string
+                    email: user@example.com
+                    birth_date: '1997-10-31'
+                    password: pa$$word
+                    location: string
+                    user_config: {}
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '400':
+          description: Bad Request
+          content:
+            text/html:
+              schema:
+                type: string
+                description: html validator explanation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+            examples:
+              example-1:
+                value:
+                  username: string
+                  email: user@example.com
+                  birth_date: '1997-10-31'
+                  password: pa$$word
+                  location: string
+                  user_config: {}
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+      tags:
+        - Users
+    parameters: []
+    put:
+      summary: ''
+      operationId: put-users
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      description: Edit user with user_id from jwt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/editUser'
+            examples: {}
+        description: ''
+      security:
+        - passport-jwt: []
+      tags:
+        - Users
+    delete:
+      summary: ''
+      operationId: delete-users
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      description: Delete the logged in user
+      tags:
+        - Users
+      security:
+        - passport-jwt: []
+  '/postings/{postingsID}':
+    parameters:
+      - schema:
+          type: string
+        name: postingsID
+        in: path
+        required: true
+        description: id of the posting to retrieve
+    get:
+      summary: ''
+      operationId: get-postings-postingsID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/retrievePosting'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reason:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reason:
+                    type: string
+      description: get a posting by id
+      tags:
+        - Postings
+    put:
+      summary: ''
+      operationId: put-postings-postingsID
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/editPosting'
+      description: edit posting
+      tags:
+        - Postings
+      security:
+        - passport-jwt: []
+    delete:
+      summary: ''
+      operationId: delete-postings-postingsID
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Delete posting
+      tags:
+        - Postings
+      security:
+        - passport-jwt: []
+  /postings:
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-postings
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/retrievePosting'
+        '400':
+          description: Bad Request
+          content:
+            text/html:
+              schema:
+                type: object
+                description: Html explenation from json schema validator
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      description: create a new posting
+      security:
+        - passport-jwt: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createPosting'
+        description: the created posting info
+      tags:
+        - Postings
+  /postings/search:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Postings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Postings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/retrievePosting'
+              examples:
+                example-1:
+                  value:
+                    Postings:
+                      - posting_id: 1
+                        title: string
+                        description: string
+                        location: string
+                        shipping_method: string
+                        price: string
+                        category: string
+                        image_link: string
+        '400':
+          description: Bad Request
+      operationId: get-postings-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: location
+          description: the location of posting
+        - schema:
+            type: string
+          in: query
+          name: category
+          description: the category of posting
+      description: Retrieve searched postings
+  '/postings/user/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Postings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  postings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/retrievePosting'
+              examples:
+                example-1:
+                  value:
+                    postings:
+                      - posting_id: 1
+                        title: string
+                        description: string
+                        location: string
+                        shipping_method: string
+                        price: string
+                        category: string
+                        image_link: string
+        '401':
+          description: Unauthorized
+      operationId: get-postings-user-userID
+      description: Get postings by user-id
+      security:
+        - passport-jwt: []
+  /users/login:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+        '401':
+          description: Unauthorized
+      operationId: get-users-login
+      description: login user with http basic
+      security:
+        - passport-http: []
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: HTTP-Basic
+          description: The login info for the request
+          required: true
+  /postings/fresh:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Postings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  postings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/retrievePosting'
+        '404':
+          description: Not Found
+      operationId: get-postings-fresh
+      description: get five newest postings on the database
+  /postings/all:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Postings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  postings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/retrievePosting'
+        '404':
+          description: Not Found
+      operationId: get-postings-all
+      description: Get all postings
+components:
+  schemas:
+    createUser:
+      title: User
+      type: object
+      description: ''
+      x-examples:
+        Bob Joe:
+          username: bobJoe
+          email: user@example.com
+          dateOfBirth: '1997-10-31'
+          password: pa$$word
+          location: location
+          user_config: {}
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        birth_date:
+          type: string
+          format: date
+          example: '1997-10-31'
+        password:
+          type: string
+          format: password
+        location:
+          type: string
+        user_config:
+          type: object
+      required:
+        - username
+        - email
+        - birth_date
+        - password
+        - location
+    createPosting:
+      title: Posting
+      type: object
+      x-examples:
+        example-1:
+          user_id: 0
+          title: string
+          description: string
+          price: string
+          location: string
+          category: string
+          shipping_method: string
+      properties:
+        user_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: string
+        location:
+          type: string
+        category:
+          type: string
+        shipping_method:
+          type: string
+        posting_config:
+          type: object
+      required:
+        - user_id
+        - title
+        - description
+        - price
+        - location
+        - category
+        - shipping_method
+    editUser:
+      title: editUser
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+      x-examples:
+        example-1:
+          username: string
+          email: string
+    editPosting:
+      title: editPosting
+      type: object
+      properties:
+        description:
+          type: string
+        location:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+        shipping_method:
+          type: string
+        posting_config:
+          type: string
+        title:
+          type: string
+    retrieveUser:
+      title: retrieveUser
+      type: object
+      properties:
+        user_id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        location:
+          type: string
+    retrievePosting:
+      title: retrievePosting
+      type: object
+      properties:
+        posting_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        shipping_method:
+          type: string
+        price:
+          type: string
+        category:
+          type: string
+        image_link:
+          type: string
+      x-examples:
+        example-1:
+          posting_id: 17
+          title: Pizza
+          description: It's a pizza
+          location: Oulu
+          shipping_method: Delivered
+          price: 10
+          category: Food
+          image_link: 'https://res.cloudinary.com/dpfn5gulb/image/upload/v1614255373/wa5vce3tqanmw4snqwtf.jpg'
+  securitySchemes:
+    passport-http:
+      type: http
+      scheme: basic
+      description: HTTP-Basic protocol login
+    passport-jwt:
+      type: http
+      scheme: bearer
+      description: jwt token auth
+tags:
+  - name: Postings
+  - name: Users
