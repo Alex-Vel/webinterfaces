@@ -24,7 +24,7 @@ module.exports = {
   getPostingsByUserId: async (user_id) => {
     return new Promise((resolve, reject) => {
       db.query(
-        "SELECT posting_id, title, description, location, shipping_method, price, category, image_link FROM postings WHERE user_id = $1 ",
+        "SELECT posting_id, title, description, location, shipping_method, price, category, create_date, image_link FROM postings WHERE user_id = $1 ORDER BY create_date DESC ",
         [user_id],
         function (error, result) {
           if (result.rows.length < 1 || error != undefined) {
@@ -116,7 +116,7 @@ module.exports = {
           "SELECT posting_id, title, description, location, shipping_method, price, category, image_link, create_date FROM postings ORDER BY create_date DESC ",
           function (error, result) {
             if (result.rows[0] == undefined || error != undefined) {
-              reject("no such posting");
+              reject("no postings");
             } else {
               console.log(result.rows);
               resolve(result.rows);
@@ -134,7 +134,7 @@ module.exports = {
         "SELECT posting_id, title, description, location, shipping_method, price, category, image_link, create_date FROM postings ORDER BY create_date DESC ",
         function (error, result) {
           if (result.rows[0] == undefined || error != undefined) {
-            reject("no such posting");
+            reject("no postings");
           } else {
 
             for(let i = 0; i<5; i++)
