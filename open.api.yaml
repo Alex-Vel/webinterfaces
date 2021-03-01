@@ -66,15 +66,7 @@ paths:
                 properties:
                   userId:
                     type: number
-              examples:
-                example-1:
-                  value:
-                    username: string
-                    email: user@example.com
-                    birth_date: '1997-10-31'
-                    password: pa$$word
-                    location: string
-                    user_config: {}
+              examples: {}
             application/xml:
               schema:
                 type: object
@@ -99,7 +91,6 @@ paths:
                   birth_date: '1997-10-31'
                   password: pa$$word
                   location: string
-                  user_config: {}
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
       tags:
@@ -432,8 +423,6 @@ components:
           format: password
         location:
           type: string
-        user_config:
-          type: object
       required:
         - username
         - email
